@@ -1,4 +1,6 @@
-#Rogue game
-**A test-project for some local company**
-##Stack Requirements:
-###ES-5
+# Rogue game
+### Description:
+A test-project for a local company
+
+### Stack Requirements:
+ES-5
