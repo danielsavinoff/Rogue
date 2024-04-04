@@ -48,6 +48,7 @@ var moveEnemy = setInterval(function updateEnemyCoordinates() {
                 if (newCoordinate < 0 || newCoordinate > w - 1) return;
 
                 if (game[element.y][newCoordinate].className === path.className) {
+                    populate(game[element.y][element.x], [{x: newCoordinate, y: element.y}])
                     populate(path, [{x: element.x, y: element.y}]);
                     element.x = newCoordinate;
                 }
@@ -55,6 +56,7 @@ var moveEnemy = setInterval(function updateEnemyCoordinates() {
                 if (newCoordinate < 0 || newCoordinate > h - 1) return;
 
                 if (game[newCoordinate][element.x].className === path.className) {
+                    populate(game[element.y][element.x], [{x: element.x, y: newCoordinate}])
                     populate(path, [{x: element.x, y: element.y}]);
                     element.y = newCoordinate;
                 }
