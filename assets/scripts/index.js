@@ -82,16 +82,20 @@ for (var y = 0; y < h; y++) {
 
 /**
  * @param {Node} node - node that is being cloned
- * @param {Array<{x: number, y: number, health: undefined | number}>} instances - an array with options of instances
+ * @param {Array<{x: number, y: number, health: undefined | number, left: boolean | undefined}>} instances - an array with options of instances
  * @returns {void}
  */
 function populate(node, instances) {
     instances.forEach(function addToGame(instance) {
         var clonedNode = node.cloneNode(true);
 
-        if (instance.health) {
+        if (instance.health) 
             clonedNode.childNodes[0].style.maxWidth = instance.health + "%";
-        }
+   
+        if (instance.left)
+            clonedNode.classList.add("left")
+        else 
+            clonedNode.classList.remove("left")
 
         game[instance.y][instance.x] = clonedNode;
     })

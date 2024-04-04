@@ -15,9 +15,11 @@ document.addEventListener("keyup", function listener(event) {
             break;
         case "KeyA":
             goTo(playerInstance.x - 1, playerInstance.y);
+            playerInstance.left = true;
             break;
         case "KeyD": 
             goTo(playerInstance.x + 1, playerInstance.y);
+            playerInstance.left = false;
             break;
         case "KeyS": 
             goTo(playerInstance.x, playerInstance.y + 1);
@@ -30,7 +32,6 @@ document.addEventListener("keyup", function listener(event) {
             break;
     }
 });
-
 
 function goTo(x, y) {
     if (
@@ -78,7 +79,10 @@ function goTo(x, y) {
 }
 
 function attack(x, y) {
-    if (enemy.className === game[y][x].className) {
+    if (
+        enemy.className === game[y][x].className ||
+        enemy.className + " left" === game[y][x].className
+    ) {
         var instanceIndex = enemyInstances.findIndex(
             function getEnemyIndex(enemy) {
                 return enemy.x === x && enemy.y === y
@@ -90,7 +94,7 @@ function attack(x, y) {
 
         if (enemyInstances[instanceIndex].health - damage <= 0) {
             enemyInstances.splice(instanceIndex, 1);
-            populate(path, [{x: instance.x, y: instance.y}]);
+            populate(path, [{x,y}]);
         }
 
         instance.health -= damage;
