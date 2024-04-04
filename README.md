@@ -4,3 +4,5 @@ A test-project for a local company
 
 ### Stack Requirements:
 ES-5
+
+![preview](preview.png)
