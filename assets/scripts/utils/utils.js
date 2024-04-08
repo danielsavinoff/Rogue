@@ -7,6 +7,11 @@ function getRandomNumBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * @typedef {object} Position
+ * @prop {number} x
+ * @prop {number} y
+ */
 
 /**
  * @param {number} w - width of the scene
@@ -14,7 +19,7 @@ function getRandomNumBetween(min, max) {
  * @param {number} room_min_dimension - minimum height or width of the room 
  * @param {number} room_max_dimension - minimum height or width of the room 
  * @param {number} amount - amount of rooms
- * @returns {Array<{x: number, y: number}>}
+ * @returns {Position[]}
  */
 function getRoomIndices(
     w, 
@@ -76,7 +81,7 @@ function getRoomIndices(
  * @param {number} maxTiles
  * @param {number} min 
  * @param {number} max 
- * @returns {Array<number>}
+ * @returns {number[]}
  */
 function getExitIndices(maxTiles, min, max) {
     var indices = [];
@@ -101,45 +106,13 @@ function getExitIndices(maxTiles, min, max) {
 }
 
 
-/**
- * @param {Array<Node[]>} array - two-dimensional array
- * @param {Node} element - an element, indicies of which are being searched
- * @returns {Array<{x: number, y: number}>}
- */
-function findElementIndices(array, element) {
-    var indices = [];
+function findEntity(entities, entity) {
+    var foundEntities = [];
 
-    for (var y = 0; y < array.length; y++) {
-        for (var x = 0; x < array[y].length; x++) {
-            if (element.isEqualNode(array[y][x])) {
-                indices.push({x, y});
-            }
-        }
+    for (var key in entities) {
+        if (entities[key] instanceof entity) 
+            foundEntities.push(entities[key])
     }
 
-    return indices;
-}
-
-
-/**
- * Returns needed amount of indices out of 
- * the pool array. 
- * 
- * @param {Array<{x: number, y: number}>} pool 
- * @param {number} amount - length of return array
- * @returns {Array<{x: number, y: number}>} 
- */
-function getRandomIndices(pool, amount) {
-    var indices = [];
-
-    for (var i = 0; i < amount; i++) {
-        var randomIndex = Math.floor(
-            Math.random() * pool.length
-        );
-        
-        indices.push(pool[randomIndex]);
-        pool.splice(randomIndex, 1);
-    }
-
-    return indices;
+    return foundEntities;
 }

@@ -1,102 +1,107 @@
-var emptyIndices = findElementIndices(game, path);
+var id = crypto.randomUUID()
+var type = player
 
-var playerInstance = emptyIndices[
-    Math.floor(Math.random() * (emptyIndices.length - 1))
-];
-playerInstance.health = 100;
-playerInstance.powerMultiplicator = 1.0;
+var foundEntities = findEntity(
+    entities, 
+    CollidableEntity
+)
+var randomIndex = Math.floor(
+    Math.random() * (foundEntities.length - 1)
+)
+var entityToSubstitute = foundEntities[randomIndex]
+
+var pos = entityToSubstitute.position
+var health = 100
+var damage = player_power
+
+var character = new Character(
+    id,
+    type,
+    pos,
+    health,
+    damage,
+    1.0,
+    null
+)
+
+delete entities[entityToSubstitute.id]
+entities[id] = character
 
 document.addEventListener("keyup", function listener(event) {
     var code = event.code;
 
     switch(code) {
         case "KeyW":
-            goTo(playerInstance.x, playerInstance.y - 1);
+            if (character.position.y === 0)
+                return
+
+            var targetId = getId(
+                character.position.x, 
+                character.position.y - 1
+            )
+
+            character.move(entities[targetId])
+
             break;
         case "KeyA":
-            goTo(playerInstance.x - 1, playerInstance.y);
-            playerInstance.left = true;
+            if (character.position.x === 0)
+                return
+
+            var targetId = getId(
+                character.position.x - 1, 
+                character.position.y
+            )
+
+            character.move(entities[targetId])
+
             break;
         case "KeyD": 
-            goTo(playerInstance.x + 1, playerInstance.y);
-            playerInstance.left = false;
+            if (character.position.x === w - 1)
+                return
+
+            var targetId = getId(
+                character.position.x + 1, 
+                character.position.y
+            )
+
+            character.move(entities[targetId])
+
             break;
         case "KeyS": 
-            goTo(playerInstance.x, playerInstance.y + 1);
+            if (character.position.y === h - 1)
+            return
+
+            var targetId = getId(
+                character.position.x, 
+                character.position.y + 1
+            )
+
+            character.move(entities[targetId])    
+
             break;
         case "Space":
-            attack(playerInstance.x, playerInstance.y - 1);
-            attack(playerInstance.x, playerInstance.y + 1);
-            attack(playerInstance.x - 1, playerInstance.y);
-            attack(playerInstance.x + 1, playerInstance.y);
-            break;
+            var targetIdTop = getId(
+                character.position.x, 
+                character.position.y - 1
+            )
+            var targetIdBottom = getId(
+                character.position.x, 
+                character.position.y + 1
+            )
+            var targetIdLeft = getId(
+                character.position.x - 1, 
+                character.position.y
+            )
+            var targetIdRight = getId(
+                character.position.x + 1, 
+                character.position.y
+            )
+
+            targetIdTop && character.attack(entities[targetIdTop])
+            targetIdBottom && character.attack(entities[targetIdBottom])
+            targetIdLeft && character.attack(entities[targetIdLeft])
+            targetIdRight && character.attack(entities[targetIdRight])
+
+            break
     }
-});
-
-function goTo(x, y) {
-    if (
-        path.isEqualNode(game[y][x]) ||
-        hp.isEqualNode(game[y][x]) ||
-        sword.isEqualNode(game[y][x])
-    ) {
-        if (hp.isEqualNode(game[y][x])) {
-            hpInstances.splice(hpInstances.findIndex(
-                function getHpIndex(hp) {
-                    return hp.x === x && hp.y === y
-                }
-            ))
-
-            playerInstance.health = 100;
-        }
-
-        if (sword.isEqualNode(game[y][x])) {
-            swordInstances.splice(swordInstances.findIndex(
-                function getSwordIndex(sword) {
-                    return sword.x === x && sword.y === y
-                }
-            ))
-
-            playerInstance.powerMultiplicator = 2.0;
-
-            setTimeout(function cleanMultiplicator() {
-                playerInstance.powerMultiplicator = 1.0;
-            }, 10000);
-        }
-
-        populate(player, [{
-            x: x,
-            y: y,
-            health: playerInstance.health
-        }]);
-        populate(path, [{
-            x: playerInstance.x, 
-            y: playerInstance.y,
-        }]);
-
-        playerInstance.x = x;
-        playerInstance.y = y;
-    } 
-}
-
-function attack(x, y) {
-    if (
-        enemy.className === game[y][x].className ||
-        enemy.className + " left" === game[y][x].className
-    ) {
-        var instanceIndex = enemyInstances.findIndex(
-            function getEnemyIndex(enemy) {
-                return enemy.x === x && enemy.y === y
-            }
-        );
-        var instance = enemyInstances[instanceIndex];
-
-        var damage = player_power * playerInstance.powerMultiplicator;
-
-        if (enemyInstances[instanceIndex].health - damage <= 0) {
-            enemyInstances.splice(instanceIndex, 1);
-            populate(path, [{x,y}]);
-        }
-
-        instance.health -= damage;
-    }
-}
+})

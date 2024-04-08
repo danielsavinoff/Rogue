@@ -20,5 +20,5 @@ h2 {font-family: "Playfair Display"; font-size: 24px; }
 .inventory-box { border: 2px solid #d0d0d0; float: left; }
 .inventory { position: relative; width: 800px; height: 32px; }
 .cl { clear: both; display: block; }
-.left { transform: scaleX(-1); }
+.left { transform: scaleX(-1); left: auto; right: 0; }
 .left > * { left: auto !important; right: 0px !important; } 

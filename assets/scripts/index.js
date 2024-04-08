@@ -40,11 +40,14 @@ enemy.appendChild(enemyHealth);
 /** 
  * Two-dimensional (h × w) array
  */
-var game = [];
+var game = new Array(h)
 
+for (let i = 0; i < game.length; i++) { 
+    game[i] = new Array(w) 
+}
 
-var exitColIndexes = getExitIndices(w, exit_min, exit_max);
-var exitRowIndexes = getExitIndices(h, exit_min, exit_max);
+var exitColIndices = getExitIndices(w, exit_min, exit_max);
+var exitRowIndices = getExitIndices(h, exit_min, exit_max);
 var roomCoordinates = getRoomIndices(
     w, 
     h, 
@@ -53,79 +56,101 @@ var roomCoordinates = getRoomIndices(
     getRandomNumBetween(room_min, room_max)
 );
 
+var entities = {}
 
 for (var y = 0; y < h; y++) {
-    game.push([]);
-
     for (var x = 0; x < w; x++) {
-        var isPath = ( 
-            exitColIndexes.includes(x) || 
-            exitRowIndexes.includes(y) ||
-            roomCoordinates.some(
-                function findIntersection(
-                    element
-                ) {
-                    return(
-                        element.x === x &&
-                        element.y === y    
-                    )
-                }
-            ) 
-        );
+        var isRoad = exitColIndices.includes(x) || exitRowIndices.includes(y)
 
-        game[y].push( 
-            isPath ? path.cloneNode(true) : wall.cloneNode(true)
-        );
+        var isRoom = !isRoad && (
+            roomCoordinates.some(function findIntersection(
+                element
+            ) {
+                return(
+                    element.x === x &&
+                    element.y === y    
+                )
+        }))
+        
+        var id = crypto.randomUUID()
+        var type = isRoad || isRoom ? path : wall
+        var pos = {x,y}
+
+        entities[id] = (type === path) ? new CollidableEntity(id, type, pos) : new Entity(id, type, pos) 
     }
 }
 
-
 /**
- * @param {Node} node - node that is being cloned
- * @param {Array<{x: number, y: number, health: undefined | number, left: boolean | undefined}>} instances - an array with options of instances
- * @returns {void}
+ * @param {number} x 
+ * @param {number} y 
+ * @returns {string}
  */
-function populate(node, instances) {
-    instances.forEach(function addToGame(instance) {
-        var clonedNode = node.cloneNode(true);
+function getId(x, y) {
+    if (x < 0 || x >= w || y < 0 || y >= h)
+        return undefined
 
-        if (instance.health) 
-            clonedNode.childNodes[0].style.maxWidth = instance.health + "%";
-   
-        if (instance.left)
-            clonedNode.classList.add("left")
-        else 
-            clonedNode.classList.remove("left")
-
-        game[instance.y][instance.x] = clonedNode;
-    })
+    return game[y][x].id
 }
 
+/**
+ * @param {{ [id: string]: Entity }} entities
+ */
+function populate(entities) {
+    for (var key in entities) {
+        var entity = entities[key]
+        
+        if (
+            ('health' in entity && entity.health < 0) ||
+            ('collected' in entity && entity.collected)
+        ) {
+            var newId = crypto.randomUUID()
+
+            var newEntity = new CollidableEntity(
+                newId, 
+                path, 
+                entity.position
+            )
+
+            delete entities[entity.id]
+            entities[newId] = newEntity
+            entity = newEntity
+        }
+
+        var x = entity.position.x
+        var y = entity.position.y
+        
+        game[y][x] = entity
+    }
+}
 
 var field = document.querySelector(".field");
 /**
- * Recursive function that populates the scene.
- * @param {Array<Node[]>} arr - two dimensional array
- * @returns {void}
+ * Recursive function that populates the scene
+ * @param {Array<Entity[]>} arr - two dimensional array
  */
 function render(arr) {
-    arr.forEach((element, i) => {
-        if (Array.isArray(element)) 
+    arr.forEach((entity, i) => {
+        if (Array.isArray(entity)) 
             return render(arr[i]);
 
-        field.appendChild(element);
+        if (entity.side && entity.side === 'left') {
+            entity.type.classList.add(entity.side)
+        } else entity.type.classList.remove('left')
+
+        if (entity.health)
+            entity.type.childNodes[0].style.maxWidth = entity.health + '%'
+        
+        
+        field.appendChild(entity.type);
     });
 }
 
 
 /**
- * Removes all children from the scene.
- * @returns {void}
+ * Removes all children from the scene
  */
 function cleanScene() {
     field.innerHTML = "";
 }
 
-
-var gameOver = document.querySelector(".game-over");
-var damage = document.querySelector(".damage");
+var damageScreen = document.querySelector(".damage");
