@@ -1,10 +1,10 @@
 /**
- * @param {number} min 
- * @param {number} max 
- * @returns {number} 
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
  */
 function getRandomNumBetween(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 /**
@@ -16,103 +16,93 @@ function getRandomNumBetween(min, max) {
 /**
  * @param {number} w - width of the scene
  * @param {number} h - height of the scene
- * @param {number} room_min_dimension - minimum height or width of the room 
- * @param {number} room_max_dimension - minimum height or width of the room 
+ * @param {number} room_min_dimension - minimum height or width of the room
+ * @param {number} room_max_dimension - minimum height or width of the room
  * @param {number} amount - amount of rooms
  * @returns {Position[]}
  */
-function getRoomIndices(
-    w, 
-    h, 
-    room_min_dimension, 
-    room_max_dimension,
-    amount
-) {
-    var indices = [];
+function getRoomIndices(w, h, room_min_dimension, room_max_dimension, amount) {
+  var indices = []
 
-    for (var i = 0; i < amount; i++) {
-        var oneUniqueRoomIndices = [];
-        
-        unique: while (!oneUniqueRoomIndices.length) {
-            var startX = Math.floor(Math.random() * w);
-            var startY = Math.floor(Math.random() * h);
+  for (var i = 0; i < amount; i++) {
+    var oneUniqueRoomIndices = []
 
-            var roomWidth = getRandomNumBetween(room_min_dimension, room_max_dimension);
-            var roomHeight = getRandomNumBetween(room_min_dimension, room_max_dimension);
+    unique: while (!oneUniqueRoomIndices.length) {
+      var startX = Math.floor(Math.random() * w)
+      var startY = Math.floor(Math.random() * h)
 
-            var endX = Math.min(startX + roomWidth, w - 1);
-            var endY = Math.min(startY + roomHeight, h - 1);
+      var roomWidth = getRandomNumBetween(
+        room_min_dimension,
+        room_max_dimension,
+      )
+      var roomHeight = getRandomNumBetween(
+        room_min_dimension,
+        room_max_dimension,
+      )
 
-            var oneRoomIndices = [];
+      var endX = Math.min(startX + roomWidth, w - 1)
+      var endY = Math.min(startY + roomHeight, h - 1)
 
-            for (var x = startX; x < endX; x++) {
-                for (var y = startY; y < endY; y++) {
-                    if (indices.some(
-                        function findDeepIntersection(
-                            element
-                        ) {
-                            const dx = Math.abs(element.x - x);
-                            const dy = Math.abs(element.y - y);
+      var oneRoomIndices = []
 
-                            return (
-                                (dx <= 1 && dy <= 1) &&
-                                (dx === 0 || dy === 0)
-                            );
-                        }
-                    )) {    
-                        continue unique;
-                    } else {
-                        oneRoomIndices.push({x, y});
-                    }
-                }
-            }
+      for (var x = startX; x < endX; x++) {
+        for (var y = startY; y < endY; y++) {
+          if (
+            indices.some(function findDeepIntersection(element) {
+              const dx = Math.abs(element.x - x)
+              const dy = Math.abs(element.y - y)
 
-            oneUniqueRoomIndices = oneUniqueRoomIndices.concat(oneRoomIndices);
+              return dx <= 1 && dy <= 1 && (dx === 0 || dy === 0)
+            })
+          ) {
+            continue unique
+          } else {
+            oneRoomIndices.push({ x, y })
+          }
         }
+      }
 
-        indices = indices.concat(oneUniqueRoomIndices);
+      oneUniqueRoomIndices = oneUniqueRoomIndices.concat(oneRoomIndices)
     }
-    
-    return indices;
-}
 
+    indices = indices.concat(oneUniqueRoomIndices)
+  }
+
+  return indices
+}
 
 /**
  * @param {number} maxTiles
- * @param {number} min 
- * @param {number} max 
+ * @param {number} min
+ * @param {number} max
  * @returns {number[]}
  */
 function getExitIndices(maxTiles, min, max) {
-    var indices = [];
+  var indices = []
 
-    for (var i = 0; i < getRandomNumBetween(min, max); i++) {
-        
-        var index;
+  for (var i = 0; i < getRandomNumBetween(min, max); i++) {
+    var index
 
-        do {
-            index = Math.floor(Math.random() * (maxTiles - 2)) + 1;
-        } while (
-            indices.includes(index) ||
-            indices.includes(index + 1) ||
-            indices.includes(index - 1) 
-        );
-    
-        indices.push(index);
+    do {
+      index = Math.floor(Math.random() * (maxTiles - 2)) + 1
+    } while (
+      indices.includes(index) ||
+      indices.includes(index + 1) ||
+      indices.includes(index - 1)
+    )
 
-    }
+    indices.push(index)
+  }
 
-    return indices;
+  return indices
 }
 
-
 function findEntity(entities, entity) {
-    var foundEntities = [];
+  var foundEntities = []
 
-    for (var key in entities) {
-        if (entities[key] instanceof entity) 
-            foundEntities.push(entities[key])
-    }
+  for (var key in entities) {
+    if (entities[key] instanceof entity) foundEntities.push(entities[key])
+  }
 
-    return foundEntities;
+  return foundEntities
 }

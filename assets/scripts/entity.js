@@ -5,15 +5,11 @@
  */
 
 /**
- * @param {string} id 
- * @param {Node} type 
- * @param {Position} position 
+ * @param {string} id
+ * @param {Node} type
+ * @param {Position} position
  */
-function Entity(
-  id,
-  type,
-  position
-) {
+function Entity(id, type, position) {
   this.id = id
   this.type = type.cloneNode(true)
   this.position = position
@@ -21,15 +17,11 @@ function Entity(
 }
 
 /**
- * @param {string} id 
- * @param {Node} type 
- * @param {Position} position 
+ * @param {string} id
+ * @param {Node} type
+ * @param {Position} position
  */
-function CollidableEntity(
-  id,
-  type,
-  position
-) {
+function CollidableEntity(id, type, position) {
   Entity.call(this, id, type, position)
   this.collision = true
 }
@@ -37,16 +29,16 @@ function CollidableEntity(
 Object.setPrototypeOf(CollidableEntity.prototype, Entity.prototype)
 
 /**
- * Object consisting key of {@link ActiveEntity} 
+ * Object consisting key of {@link ActiveEntity}
  * @typedef {object} Effect
- * @prop {any} key 
+ * @prop {any} key
  */
 
 /**
- * @param {string} id 
- * @param {Node} type 
- * @param {Position} position 
- * @param {boolean} collected 
+ * @param {string} id
+ * @param {Node} type
+ * @param {Position} position
+ * @param {boolean} collected
  * @param {ActiveEntity} forEntity
  * @param {Effect} effect
  * @param {number} maxEffectTime time in ms
@@ -58,7 +50,7 @@ function CollectableEntity(
   collected,
   forEntity,
   effect,
-  maxEffectTime
+  maxEffectTime,
 ) {
   CollidableEntity.call(this, id, type, position)
   this.collected = collected
@@ -70,11 +62,11 @@ function CollectableEntity(
 Object.setPrototypeOf(CollectableEntity.prototype, CollidableEntity.prototype)
 
 /**
- * @param {string} id 
- * @param {Node} type 
+ * @param {string} id
+ * @param {Node} type
  * @param {Position} position
- * @param {number} health 
- * @param {number} damage 
+ * @param {number} health
+ * @param {number} damage
  * @param {number} damageMultiplicator
  * @param {'left' | ''} side
  */
@@ -85,38 +77,35 @@ function ActiveEntity(
   health,
   damage,
   damageMultiplicator,
-  side
+  side,
 ) {
   Entity.call(this, id, type, position)
   this.health = health
   this.damage = damage
   this.damageMultiplicator = damageMultiplicator || 1.0
-  this.side = side || ''
+  this.side = side || ""
 }
 
 var moveAction = {
   /**
-   * @param {Entity} destination  
+   * @param {Entity} destination
    */
   move(destination) {
     if (!destination.collision) return
-    
-    var forEntity = 'forEntity' in destination && destination.forEntity
-    
-    if (
-      forEntity &&
-      !(this instanceof forEntity) 
-    ) return
-    
+
+    var forEntity = "forEntity" in destination && destination.forEntity
+
+    if (forEntity && !(this instanceof forEntity)) return
+
     var oldPosition = this.position
     this.position = destination.position
     destination.position = oldPosition
 
     var difference = oldPosition.x - this.position.x
-    
-    if ('collected' in destination) {
+
+    if ("collected" in destination) {
       destination.collected = true
-      
+
       if (destination.effect) {
         var previousKeyValue
         var currentEntity = this
@@ -124,9 +113,8 @@ var moveAction = {
         for (var key in destination.effect) {
           previousKeyValue = this[key]
           this[key] = destination.effect[key]
-          
+
           if (destination.maxEffectTime) {
-            
             setTimeout(function removeEffect() {
               currentEntity[key] = previousKeyValue
             }, destination.maxEffectTime)
@@ -136,29 +124,28 @@ var moveAction = {
     }
 
     if (difference === 0) return
-    this.side = difference < 0 ? '' : 'left'
-  }
+    this.side = difference < 0 ? "" : "left"
+  },
 }
 
 var attackAction = {
   /**
-   * @param {ActiveEntity} target 
+   * @param {ActiveEntity} target
    */
   attack(target) {
-    if (!(target instanceof ActiveEntity))
-    return
+    if (!(target instanceof ActiveEntity)) return
     console.log(this.damage, this.damageMultiplicator)
     target.takeDamage(this.damage * this.damageMultiplicator)
-  }
+  },
 }
 
 var takeDamageAction = {
   /**
-   * @param {number} dmg 
+   * @param {number} dmg
    */
   takeDamage(dmg) {
     this.health -= dmg
-  }
+  },
 }
 
 Object.assign(ActiveEntity.prototype, takeDamageAction)
@@ -167,11 +154,11 @@ Object.assign(ActiveEntity.prototype, moveAction)
 Object.setPrototypeOf(ActiveEntity.prototype, Entity.prototype)
 
 /**
- * @param {string} id 
- * @param {Node} type 
+ * @param {string} id
+ * @param {Node} type
  * @param {Position} position
- * @param {number} health 
- * @param {number} damage 
+ * @param {number} health
+ * @param {number} damage
  * @param {number} damageMultiplicator
  * @param {'left' | ''} side
  */
@@ -182,50 +169,42 @@ function Character(
   health,
   damage,
   damageMultiplicator,
-  side
+  side,
 ) {
   ActiveEntity.call(
-    this, 
-    id, 
-    type, 
-    position, 
-    health, 
-    damage, 
-    damageMultiplicator, 
-    side
+    this,
+    id,
+    type,
+    position,
+    health,
+    damage,
+    damageMultiplicator,
+    side,
   )
 }
 
 Object.setPrototypeOf(Character.prototype, ActiveEntity.prototype)
 
 /**
- * @param {string} id 
- * @param {Node} type 
+ * @param {string} id
+ * @param {Node} type
  * @param {Position} position
- * @param {number} health 
- * @param {number} damage 
+ * @param {number} health
+ * @param {number} damage
  * @param {number} damageMultiplicator
  * @param {'left' | ''} side
  * @param {number} multiplicatorExpiresAt
  */
-function Enemy(
-  id,
-  type,
-  position,
-  health,
-  damage,
-  damageMultiplicator,
-  side,
-) {
+function Enemy(id, type, position, health, damage, damageMultiplicator, side) {
   ActiveEntity.call(
-    this, 
-    id, 
-    type, 
-    position, 
-    health, 
-    damage, 
-    damageMultiplicator, 
-    side
+    this,
+    id,
+    type,
+    position,
+    health,
+    damage,
+    damageMultiplicator,
+    side,
   )
 }
 
