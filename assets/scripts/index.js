@@ -66,13 +66,13 @@ for (var y = 0; y < h; y++) {
       })
 
     var id = crypto.randomUUID()
-    var type = isRoad || isRoom ? path : wall
+    var node = isRoad || isRoom ? path : wall
     var pos = { x, y }
 
     entities[id] =
-      type === path
-        ? new CollidableEntity(id, type, pos)
-        : new Entity(id, type, pos)
+      node === path
+        ? new CollidableEntity(id, node, pos)
+        : new Entity(id, node, pos)
   }
 }
 
@@ -94,10 +94,7 @@ function populate(entities) {
   for (var key in entities) {
     var entity = entities[key]
 
-    if (
-      ("health" in entity && entity.health < 0) ||
-      ("collected" in entity && entity.collected)
-    ) {
+    if (entity.health < 0 || entity.collected) {
       var newId = crypto.randomUUID()
 
       var newEntity = new CollidableEntity(newId, path, entity.position)
@@ -124,13 +121,13 @@ function render(arr) {
     if (Array.isArray(entity)) return render(arr[i])
 
     if (entity.side && entity.side === "left") {
-      entity.type.classList.add(entity.side)
-    } else entity.type.classList.remove("left")
+      entity.node.classList.add(entity.side)
+    } else entity.node.classList.remove("left")
 
     if (entity.health)
-      entity.type.childNodes[0].style.maxWidth = entity.health + "%"
+      entity.node.childNodes[0].style.maxWidth = entity.health + "%"
 
-    field.appendChild(entity.type)
+    field.appendChild(entity.node)
   })
 }
 

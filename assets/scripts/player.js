@@ -1,5 +1,5 @@
 var id = crypto.randomUUID()
-var type = player
+var node = player
 
 var foundEntities = findEntity(entities, CollidableEntity)
 var randomIndex = Math.floor(Math.random() * (foundEntities.length - 1))
@@ -9,7 +9,7 @@ var pos = entityToSubstitute.position
 var health = 100
 var damage = player_power
 
-var character = new Character(id, type, pos, health, damage, 1.0, null)
+var character = new Character(id, node, pos, health, damage, 1.0, null)
 
 delete entities[entityToSubstitute.id]
 entities[id] = character

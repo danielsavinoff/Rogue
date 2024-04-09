@@ -1,6 +1,6 @@
 for (var i = 0; i < swords_max; i++) {
   var id = crypto.randomUUID()
-  var type = sword
+  var node = sword
 
   var foundEntities = findEntity(entities, CollidableEntity)
   var randomIndex = Math.floor(Math.random() * (foundEntities.length - 1))
@@ -8,7 +8,7 @@ for (var i = 0; i < swords_max; i++) {
 
   var swordEntity = new CollectableEntity(
     id,
-    type,
+    node,
     entityToSubstitute.position,
     false,
     Character,
@@ -22,7 +22,7 @@ for (var i = 0; i < swords_max; i++) {
 
 for (var i = 0; i < hp_max; i++) {
   var id = crypto.randomUUID()
-  var type = hp
+  var node = hp
 
   var foundEntities = findEntity(entities, CollidableEntity)
   var randomIndex = Math.floor(Math.random() * (foundEntities.length - 1))
@@ -30,7 +30,7 @@ for (var i = 0; i < hp_max; i++) {
 
   var hpEntity = new CollectableEntity(
     id,
-    type,
+    node,
     entityToSubstitute.position,
     false,
     Character,

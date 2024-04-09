@@ -1,6 +1,6 @@
 for (var i = 0; i < enemy_max; i++) {
   var id = crypto.randomUUID()
-  var type = enemy
+  var node = enemy
 
   var foundEntities = findEntity(entities, CollidableEntity)
   var randomIndex = Math.floor(Math.random() * (foundEntities.length - 1))
@@ -10,7 +10,7 @@ for (var i = 0; i < enemy_max; i++) {
   var health = 100
   var damage = enemy_power
 
-  var enemyInstance = new Enemy(id, type, pos, health, damage, 1.0)
+  var enemyInstance = new Enemy(id, node, pos, health, damage, 1.0)
 
   delete entities[entityToSubstitute.id]
   entities[id] = enemyInstance
@@ -57,8 +57,7 @@ var enemyIntervalId = setInterval(function controlEnemy() {
         targetPosition.position.x >= w ||
         targetPosition.position.y < 0 ||
         targetPosition.position.y >= h
-      )
-        return
+      ) return
 
       var targetId = getId(targetPosition.position.x, targetPosition.position.y)
 

@@ -6,23 +6,23 @@
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  */
-function Entity(id, type, position) {
+function Entity(id, node, position) {
   this.id = id
-  this.type = type.cloneNode(true)
+  this.node = node.cloneNode(true)
   this.position = position
   this.collision = false
 }
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  */
-function CollidableEntity(id, type, position) {
-  Entity.call(this, id, type, position)
+function CollidableEntity(id, node, position) {
+  Entity.call(this, id, node, position)
   this.collision = true
 }
 
@@ -36,7 +36,7 @@ Object.setPrototypeOf(CollidableEntity.prototype, Entity.prototype)
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  * @param {boolean} collected
  * @param {ActiveEntity} forEntity
@@ -45,14 +45,14 @@ Object.setPrototypeOf(CollidableEntity.prototype, Entity.prototype)
  */
 function CollectableEntity(
   id,
-  type,
+  node,
   position,
   collected,
   forEntity,
   effect,
   maxEffectTime,
 ) {
-  CollidableEntity.call(this, id, type, position)
+  CollidableEntity.call(this, id, node, position)
   this.collected = collected
   this.forEntity = forEntity
   this.effect = effect
@@ -63,7 +63,7 @@ Object.setPrototypeOf(CollectableEntity.prototype, CollidableEntity.prototype)
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  * @param {number} health
  * @param {number} damage
@@ -72,14 +72,14 @@ Object.setPrototypeOf(CollectableEntity.prototype, CollidableEntity.prototype)
  */
 function ActiveEntity(
   id,
-  type,
+  node,
   position,
   health,
   damage,
   damageMultiplicator,
   side,
 ) {
-  Entity.call(this, id, type, position)
+  Entity.call(this, id, node, position)
   this.health = health
   this.damage = damage
   this.damageMultiplicator = damageMultiplicator || 1.0
@@ -155,7 +155,7 @@ Object.setPrototypeOf(ActiveEntity.prototype, Entity.prototype)
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  * @param {number} health
  * @param {number} damage
@@ -164,7 +164,7 @@ Object.setPrototypeOf(ActiveEntity.prototype, Entity.prototype)
  */
 function Character(
   id,
-  type,
+  node,
   position,
   health,
   damage,
@@ -174,7 +174,7 @@ function Character(
   ActiveEntity.call(
     this,
     id,
-    type,
+    node,
     position,
     health,
     damage,
@@ -187,7 +187,7 @@ Object.setPrototypeOf(Character.prototype, ActiveEntity.prototype)
 
 /**
  * @param {string} id
- * @param {Node} type
+ * @param {Node} node
  * @param {Position} position
  * @param {number} health
  * @param {number} damage
@@ -195,11 +195,11 @@ Object.setPrototypeOf(Character.prototype, ActiveEntity.prototype)
  * @param {'left' | ''} side
  * @param {number} multiplicatorExpiresAt
  */
-function Enemy(id, type, position, health, damage, damageMultiplicator, side) {
+function Enemy(id, node, position, health, damage, damageMultiplicator, side) {
   ActiveEntity.call(
     this,
     id,
-    type,
+    node,
     position,
     health,
     damage,
