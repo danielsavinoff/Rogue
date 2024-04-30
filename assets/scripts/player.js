@@ -63,4 +63,6 @@ document.addEventListener("keyup", function listener(event) {
 
       break
   }
+
+  runFrame()
 })

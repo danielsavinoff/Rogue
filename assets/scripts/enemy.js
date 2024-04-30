@@ -63,5 +63,7 @@ var enemyIntervalId = setInterval(function controlEnemy() {
 
       entity.move(entities[targetId])
     }
+
+    runFrame()
   })
 }, 750)
