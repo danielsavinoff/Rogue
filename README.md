@@ -5,6 +5,7 @@ I strived to make it as much as possible compliant to the current industry stand
 - **SOLID**
 - **DRY**
 - **KISS**
+
 Worth to note, that I have used prototypes instead of syntax-sugar classes because it provides clearer understanding how inheritance in Javascript & prototype chaining works and to ensure the maximum compatibility. 
 
 ### Demo
