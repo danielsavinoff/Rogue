@@ -15,6 +15,8 @@ delete entities[entityToSubstitute.id]
 entities[id] = character
 
 document.addEventListener("keyup", function listener(event) {
+  if (character.health <= 0) return
+
   var code = event.code
 
   switch (code) {
